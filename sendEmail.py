@@ -12,9 +12,9 @@ def sendThroughEmail():
     
     msg['From'] = fromaddr
     msg['To'] = toaddr
-    msg['Subject'] = "ROBOTIC VISION"
+    msg['Subject'] = "ABNORMAL SITUATION"
     
-    body = "This is me Alemdar"
+    body = "Something unusual happened. You can check the shot from attachment."
     
     msg.attach(MIMEText(body, 'plain'))
     
