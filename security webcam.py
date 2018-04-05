@@ -6,8 +6,10 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from PIL import Image
 import time
+import datetime
 
 from sendEmail import sendThroughEmail
+from stringToImage import convertToImage
 
 def rgb2gray(rgb_image):
     gray_image = cv2.cvtColor(rgb_image, cv2.COLOR_BGR2GRAY)
@@ -42,6 +44,31 @@ def difference(img1_gray, img2_gray, row, column):
                 counter = counter + 1
     return counter
 
+def add_timestamp():
+    time_now = str ( datetime.datetime.now() )
+
+    convertToImage(time_now)
+
+    simple_image = Image.open("simple_image.jpg")
+    pix_simple_image = simple_image.load()
+
+    date_image = Image.open("date_image.png") 
+    pix_date_image = date_image.load()
+
+    row_of_simple_image, col_of_simple_image = simple_image.size
+    row_of_date_image, col_of_date_image = date_image.size
+
+    for a in range( (row_of_simple_image - row_of_date_image), row_of_simple_image, 1):
+        for b in range( (col_of_simple_image - col_of_date_image), col_of_simple_image, 1):
+            if (pix_date_image[a-(row_of_simple_image - row_of_date_image),b-(col_of_simple_image - col_of_date_image)])[1] > 230:
+                pix_simple_image[a,b] = pix_date_image[a-(row_of_simple_image - row_of_date_image),b-(col_of_simple_image - col_of_date_image)]
+    
+
+    simple_image.save("main_image.jpg")
+    
+
+    
+
 def mainFunction():
     cam = cv2.VideoCapture(0)
     diff = 0
@@ -61,7 +88,8 @@ def mainFunction():
         print("counter: ", diff)
         if diff > 10:
             print(diff)
-            cv2.imwrite("main_image.jpg", img1)
+            cv2.imwrite("simple_image.jpg", img1)
+            add_timestamp()
             plt.imshow(img2_gray)
             sendThroughEmail()
             plt.show()
